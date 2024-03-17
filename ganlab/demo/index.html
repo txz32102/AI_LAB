@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <script src="../node_modules/@bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <!---->
+  <link rel="import" href=".\ganlab.html">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.9/dialog-polyfill.min.css" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.9/dialog-polyfill.min.js"></script>
+  <script src="../lib/support.js"></script>
+  
+    <!-- Share card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@minsukkahng" />
+    <meta name="twitter:creator" content="@minsukkahng" />
+    <meta property="og:url" content="https://poloclub.github.io/ganlab/" />
+    <meta property="og:title" content="GAN Lab" />
+    <meta property="og:description"
+      content="GAN Lab: Play with Generative Adversarial Networks in Your Browser!" />
+    <meta property="og:image" content="https://poloclub.github.io/ganlab/images/share.png" />
+
+  <title>GAN Lab: 在浏览器中玩转生成对抗网络!</title>
+  <style>
+    html {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+      margin: 0;
+      min-width: 1442px;
+      width: 100%;
+      height: 100%;
+      --discriminator-color: rgb(68, 124, 228);
+      --generator-color: rgb(163, 62, 189);
+      --gradient-color: rgb(196, 20, 219);
+      --real-data-color: rgb(0, 136, 55);
+    }
+  
+    #top-bar {
+      background-color: #183D4E;
+      color: #f5f5f5;
+      font-size: 16px;
+      padding: 7px 0 6px;
+    }
+
+    #top-bar-panel-container {
+      align-items: center;
+      display: flex;
+      margin-left: auto;
+      margin-right: auto;
+      justify-content: space-between;
+      width: 1442px;
+    }
+
+    @media screen and (min-device-width: 1024px) and (max-width: 1442px) {
+      #top-bar-panel-container {
+        margin-left: 0;
+        width: 98.5vw;
+      }
+    }
+
+    #tool-description {
+      padding-left: 20px;
+    }
+
+    #source-link {
+      padding-right: 20px;
+    }
+
+    #source-link a {
+      color: #f0f0f0;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    #loading {
+      background-color: #f7f7f7;
+      font-size: 40px;
+      height: 140px;
+      line-height: 40px;
+      padding-top: 60px;
+      position: absolute;
+      text-align: center;
+      width: 100%;
+      z-index: -1;
+    }
+
+    #loading small {
+      font-size: 20px;
+    }
+
+    #demo {      
+      min-height: 200px;
+      width: 100%;
+    }
+
+    #description {
+      margin-bottom: 60px;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 660px;
+    }
+
+    #description h2 {
+      color: #444;
+      font-size: 32px;
+      font-weight: 450;
+      margin-bottom: 12px;
+      margin-top: 60px;
+    }
+
+    #description h4 {
+      color: #444;
+      font-size: 24px;
+      font-weight: 450;
+      margin-bottom: 8px;
+      margin-top: 44px;
+    }
+
+    #description p {
+      margin: 16px 0;
+    }
+
+    #description p, 
+    #description div,
+    #description li,
+    #description dt,
+    #description dd {
+      color: #555;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+      
+    #description .supporting-figure {
+      margin-bottom: 35px;
+      margin-top: 30px;
+    }
+    
+    #description .figure-caption {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+      
+    #description dt {
+      display: list-item;
+      list-style-type: disc;
+      margin-left: 30px;
+    }
+
+    #description ul {
+      margin-top: -10px;
+    }
+
+    #description a, 
+    #description .video-part-link {
+      color: #0D658C;
+      cursor: pointer;
+      font-weight: normal;
+      text-decoration: none;
+    }
+      
+    #description a:hover, 
+    #description .video-part-link:hover {
+      text-decoration: underline;
+    }
+
+    #description div.citation {
+      font-size: 14px;
+      line-height: 20px;
+      margin-top: 0px;
+      padding: 20px 10px 0 110px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="top-bar">
+    <div id="top-bar-panel-container" class="panel-container">
+      <div id="tool-description">
+        在浏览器中玩转生成对抗网络 (GAN)!   
+      </div>
+      <div id="source-link">
+        <div hidden>
+          <img src="images/github-mark.png" />
+        </div>
+      </div>
+    </div>
+  </div>      
+      
+  <div id="demo">
+    <div id="loading">
+      少女祈祷中...
+      <br />
+      <small>这可能会花费一点时间</small>
+    </div>
+    <gan-lab></gan-lab>
+  </div>
+
+  <div id="description">
+    <h2>什么是生成对抗网络?</h2>
+    <p>
+      许多机器学习系统会查看某种复杂的输入（比如，一张图片）并产生一个简单的输出（一个标签，如"猫"）。相比之下，生成模型的目标有点像相反：接收一小部分输入——可能是几个随机数——并产生一个复杂的输出，如一张逼真的人脸图像。<strong>生成对抗网络（GAN）</strong>是一种特别有效的生成模型，<a href="https://arxiv.org/pdf/1406.2661.pdf" title="The original paper by Goodfellow et al. published in 2014">仅在几年前被引入</a>，它在机器学习社区中引起了强烈的关注。
+    </p>
+    
+    <p>
+      你可能会想，为什么我们需要一个能产生逼真图像，或者能产生其他任何类型数据的可信模拟的系统。除了内在的智力挑战，这实际上是一个出奇地方便的工具，其<a href="https://arxiv.org/pdf/1701.00160.pdf" title="参见这篇教程论文的第4页">应用范围从艺术到增强模糊图像</a>。
+    </p>      
+
+    <h2>生成对抗网络是如何工作的?</h2>
+    <div class="supporting-figure">
+      <img src="figures/figure-data-selected.png" />
+      <div class="figure-caption">
+        图1. 在两处显示选定的数据分布。
+      </div>
+    </div>
+    
+    <p>
+      我们设计了两种视图，以帮助你更好地理解GAN如何工作以生成逼真的样本：
+      <br />
+      (1) <strong>模型概览图</strong>显示了GAN的架构，其主要组件以及它们是如何连接的，也可视化了组件产生的结果；
+      <br />
+      (2) <strong>分层分布</strong>视图覆盖了模型概览图中组件的可视化，因此当分析模型时，你可以更容易地比较组件的输出。
+    </p>
+    
+    <h4>
+      让训练开始。
+    </h4>
+    
+    <p>
+      要开始训练GAN模型，点击工具栏上的播放按钮（<img class="icon" src="figures/figure-icon-play.png" />）。除了来自你选择的分布的<span style="color: var(--real-data-color);">真实样本</span>，你还会看到模型生成的<span style="color: var(--generator-color);">假样本</span>。随着训练的进行，假样本的位置会不断更新。一个完美的GAN会创建假样本，其分布与真实样本的分布无法区分。当这种情况发生时，在分层分布视图中，你会看到两个分布很好地重叠在一起。
+    </p>
+    
+    <div class="supporting-figure">
+      <img src="figures/figure-animated-ring.gif" />
+      <div class="figure-caption">
+        图2. 随着训练的进行，假样本的位置不断更新。然后，真实样本和假样本的分布很好地重叠在一起。
+      </div>
+    </div>
+    
+    <h4>
+      可视化生成器和判别器。
+    </h4>
+    
+    <p>
+      回想一下，GAN中的<span style="color: var(--generator-color);">生成器</span>和<span style="color: var(--discriminator-color);">判别器</span>正在进行一场小竞赛，互相竞争，迭代更新<span style="color: var(--generator-color);">假样本</span>以使其更接近<span style="color: var(--real-data-color);">真实样本</span>。GAN Lab可视化了它们之间的交互。
+    </p>
+    
+    <p>
+      <strong>生成器。</strong>
+      如前所述，<span style="color: var(--generator-color);">生成器</span>是一个将随机输入转换为合成输出的函数。在GAN Lab中，随机输入是一个具有(x, y)值的2D样本（从均匀或高斯分布中抽取），输出也是一个2D样本，但映射到不同的位置，这是一个<span style="color: var(--generator-color);">假样本</span>。可视化这种映射的一种方式是使用<em>流形</em> <small><a href="http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/">[Olah, 2014]</a></small>。输入空间被表示为均匀的正方形网格。随着函数将输入空间中的位置映射到新的位置，如果我们可视化输出，整个网格，现在由不规则的四边形组成，看起来像原始规则网格的扭曲版本。每个（扭曲的）单元格的面积（或密度）现在已经改变，我们将密度编码为不透明度，所以更高的不透明度意味着更多的样本在更小的空间中。一个非常细粒度的流形看起来几乎与假样本的可视化相同。这种可视化显示了生成器如何学习映射函数，使其输出看起来类似于<span style="color: var(--real-data-color);">真实样本</span>的分布。
+    </p>
+    
+    <div class="supporting-figure">
+      <img src="figures/figure-generator-transformation.png" />
+      <div class="figure-caption">
+        图3. 生成器的数据转换被可视化为一个流形，它将输入噪声（最左边）转换为假样本（最右边）。
+      </div>
+    </div>
+    
+    <p>
+      <strong>判别器。</strong>
+      当生成器创建<span style="color: var(--generator-color);">假样本</span>时，<span style="color: var(--discriminator-color);">判别器</span>，一个二元分类器，试图将它们与<span style="color: var(--real-data-color);">真实样本</span>区分开来。GAN Lab将其决策边界可视化为2D热图（类似于<a href="http://playground.tensorflow.org"><em>TensorFlow Playground</em></a>）。网格单元格的背景颜色编码了分类器结果的置信值。<span style="background-color: var(--real-data-color); color: white;">更深的绿色</span>意味着该区域的样本更可能是真实的；<span style="background-color: var(--generator-color); color: white;">更深的紫色</span>，更可能是假的。当GAN接近最优时，整个热图将变得更<span style="background-color: rgb(117, 117, 117); color: white;">灰色</span>，这表明判别器不能再轻易地区分真实样本和假样本。
+    </p>
+    
+    <div class="supporting-figure">
+      <img src="figures/figure-data-selected.png" />
+      <div class="figure-caption">
+        图1. 在两处显示选定的数据分布。
+      </div>
+    </div>
+    
+    <p>
+      我们设计了两种视图，以帮助你更好地理解GAN如何工作以生成逼真的样本：
+      <br />
+      (1) <strong>模型概览图</strong>显示了GAN的架构，其主要组件以及它们是如何连接的，也可视化了组件产生的结果；
+      <br />
+      (2) <strong>分层分布</strong>视图覆盖了模型概览图中组件的可视化，因此当分析模型时，你可以更容易地比较组件的输出。
+    </p>
+    
+    <h4>
+      让训练开始。
+    </h4>
+    
+    <p>
+      要开始训练GAN模型，点击工具栏上的播放按钮（<img class="icon" src="figures/figure-icon-play.png" />）。除了来自你选择的分布的<span style="color: var(--real-data-color);">真实样本</span>，你还会看到模型生成的<span style="color: var(--generator-color);">假样本</span>。随着训练的进行，假样本的位置会不断更新。一个完美的GAN会创建假样本，其分布与真实样本的分布无法区分。当这种情况发生时，在分层分布视图中，你会看到两个分布很好地重叠在一起。
+    </p>
+    
+    <div class="supporting-figure">
+      <img src="figures/figure-animated-ring.gif" />
+      <div class="figure-caption">
+        图2. 随着训练的进行，假样本的位置不断更新。然后，真实样本和假样本的分布很好地重叠在一起。
+      </div>
+    </div>
+    
+    <h4>
+      可视化生成器和判别器。
+    </h4>
+    
+    <p>
+      回想一下，GAN中的<span style="color: var(--generator-color);">生成器</span>和<span style="color: var(--discriminator-color);">判别器</span>正在进行一场小竞赛，互相竞争，迭代更新<span style="color: var(--generator-color);">假样本</span>以使其更接近<span style="color: var(--real-data-color);">真实样本</span>。GAN Lab可视化了它们之间的交互。
+    </p>
+    
+    <p>
+      <strong>生成器。</strong>
+      如前所述，<span style="color: var(--generator-color);">生成器</span>是一个将随机输入转换为合成输出的函数。在GAN Lab中，随机输入是一个具有(x, y)值的2D样本（从均匀或高斯分布中抽取），输出也是一个2D样本，但映射到不同的位置，这是一个<span style="color: var(--generator-color);">假样本</span>。可视化这种映射的一种方式是使用<em>流形</em> <small><a href="http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/">[Olah, 2014]</a></small>。输入空间被表示为均匀的正方形网格。随着函数将输入空间中的位置映射到新的位置，如果我们可视化输出，整个网格，现在由不规则的四边形组成，看起来像原始规则网格的扭曲版本。每个（扭曲的）单元格的面积（或密度）现在已经改变，我们将密度编码为不透明度，所以更高的不透明度意味着更多的样本在更小的空间中。一个非常细粒度的流形看起来几乎与假样本的可视化相同。这种可视化显示了生成器如何学习映射函数，使其输出看起来类似于<span style="color: var(--real-data-color);">真实样本</span>的分布。
+    </p>
+    
+    <div class="supporting-figure">
+      <img src="figures/figure-generator-transformation.png" />
+      <div class="figure-caption">
+        图3. 生成器的数据转换被可视化为一个流形，它将输入噪声（最左边）转换为假样本（最右边）。
+      </div>
+    </div>
+    
+    <p>
+      <strong>判别器。</strong>
+      当生成器创建<span style="color: var(--generator-color);">假样本</span>时，<span style="color: var(--discriminator-color);">判别器</span>，一个二元分类器，试图将它们与<span style="color: var(--real-data-color);">真实样本</span>区分开来。GAN Lab将其决策边界可视化为2D热图（类似于<a href="http://playground.tensorflow.org"><em>TensorFlow Playground</em></a>）。网格单元格的背景颜色编码了分类器结果的置信值。<span style="background-color: var(--real-data-color); color: white;">更深的绿色</span>意味着该区域的样本更可能是真实的；<span style="background-color: var(--generator-color); color: white;">更深的紫色</span>，更可能是假的。当GAN接近最优时，整个热图将变得更<span style="background-color: rgb(117, 117, 117); color: white;">灰色</span>，这表明判别器不能再轻易地区分真实样本和假样本。
+    </p>
+    
+    <div class="supporting-figure">
+      <img src="figures/figure-discriminator-heatmap.png" />
+      <div class="figure-caption">
+        图4. 通过2D热图可以解读判别器的性能。在这里，判别器的表现很好，因为大多数真实样本位于其分类表面的绿色区域（假样本位于紫色区域）。
+      </div>
+    </div>
+    
+    <h4>
+      理解生成器和判别器之间的相互作用。
+    </h4>
+    
+    <p>
+      在GAN中，两个网络在迭代更新自身时会相互影响。GAN Lab的一个重要用途是使用其可视化功能来学习<span style="color: var(--generator-color);">生成器</span>如何逐步更新自身，以改进其生成的假样本，使其越来越逼真。生成器通过试图欺骗<span style="color: var(--discriminator-color);">判别器</span>来实现这一点。当判别器将<span style="color: var(--generator-color);">假样本</span>分类为<span style="color: var(--real-data-color);">真实</span>时，生成器的损失值会减小（对判别器来说是坏事，但对生成器来说是好事）。GAN Lab将梯度（以<span style="color: var(--gradient-color);">粉红线</span>表示）可视化，以便生成器能够实现其成功。
+    </p>
+
+    <div class="supporting-figure">
+      <img src="figures/figure-gradients-interplay.png" />
+      <div class="figure-caption">
+        图5. 假样本的移动方向由基于这些样本当前位置和判别器当前分类表面（通过背景颜色可视化）的生成器的梯度（粉红线）指示。
+      </div>
+    </div>
+    
+    <p>
+      通过这种方式，<span style="color: var(--generator-color);">生成器</span>逐渐改进，以产生更逼真的样本。一旦假样本更新，<span style="color: var(--discriminator-color);">判别器</span>将相应地更新以微调其决策边界，并等待下一批试图欺骗自己的假样本。这种迭代更新过程将持续，直到判别器无法区分<span style="color: var(--real-data-color);">真实</span>和<span style="color: var(--generator-color);">假</span>样本。
+    </p>
+    
+    <h4>
+      与交互功能玩耍。
+    </h4>
+    
+    <p>
+      GAN Lab有许多酷炫的功能，支持交互式实验。
+      <dl>
+        <dt>
+          交互式超参数调整
+        </dt>
+        <dd>
+          点击编辑图标（<img class="icon" src="figures/figure-icon-edit.png" />）以显示单个超参数，并在训练过程中编辑它们。
+        </dd>
+        <dt>
+          用户定义的数据分布
+        </dt>
+        <dd>
+          如果你不喜欢我们选择的分布，可以通过点击数据分布列表末尾的图标（<img class="icon" src="figures/figure-icon-draw.png" />）来绘制你自己的分布。
+        </dd>
+        <dt>
+          慢动作模式
+        </dt>
+        <dd>
+          追踪不到动画？那么你可以通过点击慢动作图标（<img class="icon" src="figures/figure-icon-slow.png" />）进入慢动作模式。
+          <a class="video-part-link" data-start="111" data-end="138">查看此视频</a>
+        </dd>
+        <dt>
+          手动逐步执行
+        </dt>
+        <dd>
+          如果你想要更多的控制，你可以通过点击图标（<img class="icon" src="figures/figure-icon-step.png" />）手动训练每个迭代步骤。
+          <a class="video-part-link" data-start="139" data-end="190">查看此视频</a>
+        </dd>
+      </dl>
+    </p>
+    
+    <p>
+      查看以下视频，快速了解GAN Lab的功能。
+      <ul>
+        <li class="video-part-link" data-start="1" data-end="37">
+          GAN Lab介绍 
+          <small>(0:00-0:38)</small>
+        </li>
+        <li class="video-part-link" data-start="38" data-end="64">
+          调整超参数进行简单分布的训练 
+          <small>(0:38-1:05)</small>
+        </li>
+        <li class="video-part-link" data-start="65" data-end="110">
+          用户定义分布的训练
+          <small>(1:05-1:51)</small>
+        </li>
+        <li class="video-part-link" data-start="111" data-end="138">
+          慢动作模式 
+          <small>(1:51-2:19)</small>
+        </li>
+        <li class="video-part-link" data-start="139" data-end="190">
+          手动逐步执行 
+          <small>(2:19-3:10)</small>
+        </li>
+      </ul>
+
+      <iframe id="video-demo-iframe" width="640" height="302" 
+        style="width: 640px;"
+        src="https://www.youtube.com/embed/eTq9T_sPTYQ?rel=0&amp;enablejsapi=1"
+        frameborder="0" allowfullscreen>
+      </iframe>
+    </p>
+
+    <h2>如何实现的？</h2>
+    <p>
+      GAN Lab使用<a href="https://js.tensorflow.org/"><em>TensorFlow.js</em></a>，
+      这是一个在浏览器中的GPU加速深度学习库。
+      从模型训练到可视化，一切都是用JavaScript实现的。你只需要一个像Chrome这样的网络浏览器就可以运行GAN Lab。
+      我们的实现方法显著地扩大了人们对深度学习交互工具的访问。
+      源代码可以在<a href="https://github.com/poloclub/ganlab">GitHub</a>上找到。
+    </p>
+
+    <h2>谁开发了GAN Lab？</h2>
+    <p>
+      GAN Lab是由<a href="http://minsuk.com">Minsuk Kahng</a>，
+      <a href="https://twitter.com/nsthorat">Nikhil Thorat</a>，
+      <a href="https://www.cc.gatech.edu/~dchau/">Polo Chau</a>，
+      <a href="http://www.fernandaviegas.com/">Fernanda Viégas</a>和
+      <a href="http://www.bewitched.com/">Martin Wattenberg</a>创建的，
+      这是Georgia Tech和Google Brain/<a href="https://ai.google/research/teams/brain/pair">PAIR</a>之间的一项研究合作成果。
+      我们还要感谢Shan Carter和Daniel Smilkov，
+      <a href="https://research.google.com/bigpicture/">Google Big Picture团队</a>和
+      <a href="https://ai.google/research/teams/brain/pair">Google People + AI Research (PAIR)</a>，以及
+      <a href="http://vis.gatech.edu/">Georgia Tech Visualization Lab</a>的反馈。
+    </p>
+    
+  </div>
+
+  <script type="text/javascript">
+    const tag = document.createElement('script');
+    tag.id = 'iframe-demo';
+    tag.src = 'https://www.youtube.com/iframe_api';
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  
+    let player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('video-demo-iframe', {
+        events: {
+          'onReady': onPlayerReady
+        }
+      });
+    }
+    function onPlayerReady(event) {
+      player.mute()
+    }
+    
+    const videoLinks = document.querySelectorAll('.video-part-link');
+    Array.from(videoLinks).forEach((linkElement) => {
+      linkElement.addEventListener('click', () => {
+        const startSecond = linkElement.getAttribute('data-start');
+        player.seekTo(startSecond);
+        player.playVideo();
+      });
+    });
+  </script>
+</body>
+
+</html>
