@@ -23,7 +23,7 @@ elif [ "$1" = "ganlab" ]; then
     echo "Starting ganlab..."
     ensure_nvm
     nvm use 6
-    cd ganlab && ./script/watch-demo
+    cd ganlab && ./scripts/watch-demo
 elif [ "$1" = "cnn" ]; then
     echo "Starting cnn-explainer..."
     ensure_nvm
