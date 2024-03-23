@@ -86,7 +86,7 @@
             >
           </li>
           <li>
-            <a href="./?dataset=acl-abstracts"> ACL Abstracts (63k text) </a>
+            <a href="./?dataset=acl-abstracts"> 摘要 (63k text) </a>
           </li>
           <li>
             <a href="./?dataset=imdb"> IMDB Reviews (25k text) </a>
@@ -170,7 +170,7 @@
 
   <div class="footer">
     <span class="name"
-      ><span class="svg-icon">{@html iconWizmap}</span>WizMap
+      ><span class="svg-icon">{@html iconWizmap}</span>知识图谱
     </span>
     <button
       on:click="{() => {

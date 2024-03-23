@@ -139,7 +139,7 @@
       id="search-bar-input"
       name="search-query"
       bind:value="{searchInputValue}"
-      placeholder="搜索 WizMap 嵌入"
+      placeholder="搜索知识图谱嵌入"
       spellcheck="false"
       on:focus="{() => {
         inputFocused = true;
