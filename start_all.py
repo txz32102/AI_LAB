@@ -32,9 +32,9 @@ def execute_command(command):
 # List of commands to be executed
 commands = [
     "sh local.sh start",
-    "sh local.sh cnn",
-    "sh local.sh dodrio",
-    "sh local.sh wizmap",
+    "sh local.sh cnnlab",
+    "sh local.sh transformerlab",
+    "sh local.sh knowledgelab",
     "sh local.sh ganlab",
 ]
 

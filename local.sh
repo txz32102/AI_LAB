@@ -18,27 +18,27 @@ ensure_nvm() {
 # This script supports starting different applications based on the argument provided
 if [ "$1" = "start" ]; then
     echo "Starting the application..."
-    cd reveal && npm run serve
+    cd frontend && npm run serve
 elif [ "$1" = "ganlab" ]; then
     echo "Starting ganlab..."
     ensure_nvm
     nvm use 6
     cd ganlab && ./scripts/watch-demo
-elif [ "$1" = "cnn" ]; then
-    echo "Starting cnn-explainer..."
+elif [ "$1" = "cnnlab" ]; then
+    echo "Starting cnnlab..."
     ensure_nvm
     nvm use 20
-    cd cnn-explainer && npm run dev
-elif [ "$1" = "dodrio" ]; then
-    echo "Starting dodrio..."
+    cd cnnlab && npm run dev
+elif [ "$1" = "transformerlab" ]; then
+    echo "Starting transformerlab..."
     ensure_nvm
     nvm use 20
-    cd dodrio && npm run dev
-elif [ "$1" = "wizmap" ]; then
-    echo "Starting wizmap..."
+    cd transformerlab && npm run dev
+elif [ "$1" = "knowledgelab" ]; then
+    echo "Starting knowledgelab..."
     ensure_nvm
     nvm use 20
-    cd wizmap && npm run dev
+    cd knowledgelab && npm run dev
 elif [ "$1" = "all" ]; then
     echo "Starting all applications..."
     # Assuming all applications can run under the same version or handling them separately.
